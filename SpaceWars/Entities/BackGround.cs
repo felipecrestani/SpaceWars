@@ -16,7 +16,7 @@ namespace SpaceWars.Entities
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, new Rectangle(500, 400, 2500, 1600), new Rectangle(0, 0, Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight), Color.White, backgroundAngle, new Vector2(500, 400), SpriteEffects.None, 1);
+            spriteBatch.Draw(Texture, new Rectangle(500, 400,2200, 1600), new Rectangle(0, 0, Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight), Color.White, backgroundAngle, new Vector2(500, 400), SpriteEffects.None, 1);
         }
 
         public void Update(GameTime gameTime)

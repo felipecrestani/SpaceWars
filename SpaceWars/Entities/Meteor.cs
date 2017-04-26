@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SpaceWars
 {
-    public class Meteor : IDisposable
+    public class Meteor
     {
         public Texture2D Texture { get; set; }
         public Rectangle Person;
@@ -38,9 +38,9 @@ namespace SpaceWars
 
         }
 
-        public void Dispose()
+        public void Remove()
         {
-            Dispose();
+            this.Person.Y = 999;
         }
     }
 }

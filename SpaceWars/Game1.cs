@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using SpaceWars.Entities;
+using SpaceWars.Entities.Controller;
 
 namespace SpaceWars
 {
@@ -17,7 +18,7 @@ namespace SpaceWars
         SpriteBatch spriteBatch;
         SpaceShip spaceShip;
         BackGround backGround;
-        List<Shot> Shots;
+        ShotController shotController;
         List<Meteor> Meteors;
         double timer = 5, lastShot;
         SpriteFont font, smallFont;
@@ -44,7 +45,7 @@ namespace SpaceWars
         /// </summary>
         protected override void Initialize()
         {
-            Shots = new List<Shot>();
+            shotController = new ShotController();
             Meteors = new List<Meteor>();
             gameState = GameState.Playing;
             base.Initialize();
@@ -76,8 +77,6 @@ namespace SpaceWars
             soundEffectInstance = Theme_Song.CreateInstance();
             soundEffectInstance.IsLooped = true;
             soundEffectInstance.Play();
-
-            // TODO: use this.Content to load your game content here
         }
 
         /// <summary>
@@ -100,27 +99,25 @@ namespace SpaceWars
             Keyboard(gameTime);
             backGround.Update(gameTime);
 
-            List<Shot> listToRemove = new List<Shot>();
-
-            foreach (var item in Shots)
+            foreach (var shot in shotController.ShotsList)
             {
-                item.Update();
+                shot.Update();
 
-                if (item.Person.Y < 0)
-                    listToRemove.Add(item);
+                if (shot.Person.Y < 0)
+                    shotController.Remove(shot);
 
                 foreach (var meteor in Meteors)
                 {
-                    if (meteor.Person.Intersects(item.Person))
+                    if (meteor.Person.Intersects(shot.Person))
                     {
                         score++;
-                        meteor.Dispose();
-                        listToRemove.Add(item);
+                        meteor.Remove();
+                        shotController.Remove(shot);
                     }
                 }
             }
 
-            Shots.RemoveAll(x => listToRemove.Contains(x));
+            shotController.DisposeShots();  
 
             var elapsed = gameTime.ElapsedGameTime.TotalSeconds;
             timer -= elapsed;
@@ -129,7 +126,7 @@ namespace SpaceWars
             {
                 Meteor meteor = new Meteor(meteorTexture);
                 Meteors.Add(meteor);
-                timer = 1;   //Time to meteor respaw
+                timer = 1;
             }
 
             foreach (var meteor in Meteors)
@@ -141,6 +138,7 @@ namespace SpaceWars
                     gameState = GameState.GameOver;
                 }
             }
+            
 
             base.Update(gameTime);
         }
@@ -178,8 +176,8 @@ namespace SpaceWars
                         {
                             if (gameTime.ElapsedGameTime.TotalSeconds >= lastShot)
                             {
-                                Shot fire = new Shot(shotTexture,spaceShip.Person.Center.X - 2, spaceShip.Person.Y);
-                                Shots.Add(fire);
+                                Shot shot = new Shot(shotTexture,spaceShip.Person.Center.X - 2, spaceShip.Person.Y);
+                                shotController.Add(shot);
                                 Fire_Sound.Play();
                                 lastShot = gameTime.ElapsedGameTime.TotalSeconds;
                             }
@@ -229,8 +227,8 @@ namespace SpaceWars
                 {
                     if (gameTime.ElapsedGameTime.Seconds >= lastShot)
                     {
-                        Shot fire = new Shot(shotTexture,spaceShip.Person.Center.X - 2, spaceShip.Person.Y);
-                        Shots.Add(fire);
+                        Shot shot = new Shot(shotTexture, spaceShip.Person.Center.X - 2, spaceShip.Person.Y);
+                        shotController.Add(shot);
                         Fire_Sound.Play();
                         lastShot = gameTime.ElapsedGameTime.Seconds;
                         isFiring = true;
@@ -265,7 +263,7 @@ namespace SpaceWars
             {
                 spaceShip.Draw(spriteBatch);
 
-                foreach (var shot in Shots)
+                foreach (var shot in shotController.ShotsList)
                 {
                     shot.Draw(spriteBatch);
                 }
