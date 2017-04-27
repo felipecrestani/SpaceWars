@@ -26,10 +26,8 @@ namespace SpaceWars
         SoundEffect Fire_Sound, Theme_Song;
         SoundEffectInstance soundEffectInstance;
         GameState gameState;
-
         bool isFiring;
         Texture2D backgroundTexture, meteorTexture, spaceshipTexture, shotTexture;
-
 
         public Game1()
         {

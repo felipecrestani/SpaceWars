@@ -17,7 +17,7 @@ namespace SpaceWars
             Texture = texture;
             Random rand = new Random();
             var size = rand.Next(32, 100);
-            this.Person = new Rectangle(rand.Next(0,960),0, size, size);
+            this.Person = new Rectangle(rand.Next(0,1920),0, size, size);
             angle = rand.Next(0, 3);
             velocity = rand.Next(1, 10);
         }
