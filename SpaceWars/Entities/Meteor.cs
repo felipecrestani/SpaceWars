@@ -42,5 +42,10 @@ namespace SpaceWars
         {
             this.Person.Y = 999;
         }
+
+        public Vector2 Location()
+        {
+            return new Vector2(Person.X, Person.Y);
+        }
     }
 }

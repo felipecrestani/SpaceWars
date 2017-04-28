@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="Entities\BackGround.cs" />
     <Compile Include="Entities\Controller\ShotController.cs" />
+    <Compile Include="Helper\AnimateSprite.cs" />
     <Compile Include="Helper\Enums.cs" />
     <Compile Include="Entities\Interfaces\IGameEntity.cs" />
     <Compile Include="Entities\Shot.cs" />

@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using SpaceWars.Entities;
 using SpaceWars.Entities.Controller;
+using SpaceWars.Helper;
+using System.Linq;
 
 namespace SpaceWars
 {
@@ -27,11 +29,14 @@ namespace SpaceWars
         SoundEffectInstance soundEffectInstance;
         GameState gameState;
         bool isFiring;
-        Texture2D backgroundTexture, meteorTexture, spaceshipTexture, shotTexture;
+        Texture2D backgroundTexture, meteorTexture, spaceshipTexture, shotTexture, meteorExplosionTexture;
+        List<AnimatedSprite> MeteorsExplostionList;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.ToggleFullScreen();
+            graphics.ApplyChanges();
             Content.RootDirectory = "Content";
         }
 
@@ -45,6 +50,7 @@ namespace SpaceWars
         {
             shotController = new ShotController();
             Meteors = new List<Meteor>();
+            MeteorsExplostionList = new List<AnimatedSprite>();
             gameState = GameState.Playing;
             base.Initialize();
         }
@@ -58,6 +64,7 @@ namespace SpaceWars
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);            
             meteorTexture = Content.Load<Texture2D>("meteor");
+            meteorExplosionTexture = Content.Load<Texture2D>("explosion");
 
             spaceshipTexture = Content.Load<Texture2D>("spaceship");
             spaceShip = new SpaceShip(spaceshipTexture);
@@ -108,7 +115,8 @@ namespace SpaceWars
                 {
                     if (meteor.Person.Intersects(shot.Person))
                     {
-                        score++;
+                        score++;                        
+                        MeteorsExplostionList.Add(new AnimatedSprite(meteorExplosionTexture, 5, 5,meteor.Location()));
                         meteor.Remove();
                         shotController.Remove(shot);
                     }
@@ -136,7 +144,17 @@ namespace SpaceWars
                     gameState = GameState.GameOver;
                 }
             }
-            
+
+            foreach (var item in MeteorsExplostionList)
+            {
+                item.Update();
+
+                if (item.currentFrame == item.totalFrames -1)
+                    item.isActive = false;
+            }
+
+            MeteorsExplostionList.RemoveAll(x => x.isActive == false);
+
 
             base.Update(gameTime);
         }
@@ -271,8 +289,13 @@ namespace SpaceWars
                     meteor.Draw(spriteBatch);
                 }
 
-                spriteBatch.DrawString(font, "Time: " + gameTime.TotalGameTime + " Score: " + score.ToString(), Vector2.Zero, Color.White);
-                spriteBatch.DrawString(font, "X:" + spaceShip.Person.X + " Y:" + spaceShip.Person.Y, new Vector2(0, 800), Color.White);
+                foreach (var item in MeteorsExplostionList)
+                {
+                    item.Draw(spriteBatch);
+                }
+
+                spriteBatch.DrawString(font, "Time: " + gameTime.TotalGameTime.ToString("h'h 'm'm 's's'") + " Score: " + score.ToString(), Vector2.Zero, Color.White);
+                //spriteBatch.DrawString(font, "X:" + spaceShip.Person.X + " Y:" + spaceShip.Person.Y, new Vector2(0, 800), Color.White);
             }
 
             if (gameState == GameState.GameOver)
