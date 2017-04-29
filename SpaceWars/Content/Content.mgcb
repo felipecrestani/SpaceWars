@@ -115,3 +115,9 @@
 /processorParam:TextureFormat=Color
 /build:menu.jpg
 
+#begin meteorexplosion.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:meteorexplosion.mp3
+

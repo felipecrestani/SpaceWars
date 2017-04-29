@@ -25,7 +25,7 @@ namespace SpaceWars
         double timer = 5, lastShot;
         SpriteFont font, smallFont;
         int score;
-        SoundEffect Fire_Sound, Theme_Song;
+        SoundEffect Fire_Sound, Theme_Song, meteor_Explosion;
         SoundEffectInstance soundEffectInstance;
         GameState gameState;
         bool isFiring;
@@ -70,6 +70,7 @@ namespace SpaceWars
 
             meteorTexture = Content.Load<Texture2D>("meteor");
             meteorExplosionTexture = Content.Load<Texture2D>("explosion");
+            meteor_Explosion = Content.Load<SoundEffect>("meteorexplosion");
 
             spaceshipTexture = Content.Load<Texture2D>("spaceship");
             spaceShip = new SpaceShip(spaceshipTexture);
@@ -126,6 +127,7 @@ namespace SpaceWars
                             MeteorsExplostionList.Add(new AnimatedSprite(meteorExplosionTexture, 5, 5, meteor.Location()));
                             meteor.Remove();
                             shotController.Remove(shot);
+                            meteor_Explosion.Play();
                         }
                     }
                 }
