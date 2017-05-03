@@ -33,12 +33,14 @@ namespace SpaceWars
         List<AnimatedSprite> MeteorsExplostionList;
         KeyboardState lastKey;
         GamePadState lastButton;
+        ParticleEngine particleSystem;
+
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            graphics.ToggleFullScreen();
-            graphics.ApplyChanges();
+            //graphics.ToggleFullScreen();
+            //graphics.ApplyChanges();
             Content.RootDirectory = "Content";
         }
 
@@ -85,6 +87,12 @@ namespace SpaceWars
             backgroundTexture = Content.Load<Texture2D>("background");
             backGround = new BackGround(backgroundTexture,graphics);
 
+            List<Texture2D> texturesParticles = new List<Texture2D>();
+            //texturesParticles.Add(Content.Load<Texture2D>("star1"));
+            texturesParticles.Add(Content.Load<Texture2D>("star3"));
+
+            particleSystem = new ParticleEngine(texturesParticles, new Vector2(1920, 1080));
+
             soundEffectInstance = Theme_Song.CreateInstance();
             soundEffectInstance.IsLooped = true;
             soundEffectInstance.Play();
@@ -112,6 +120,11 @@ namespace SpaceWars
 
             if (gameState == GameState.Playing || gameState == GameState.GameOver)
             {
+                Random rand = new Random();
+
+                particleSystem.EmitterLocation = new Vector2(rand.Next(0, 1920), rand.Next(0, 1080));
+                particleSystem.Update();
+
                 foreach (var shot in shotController.ShotsList)
                 {
                     shot.Update();
@@ -317,7 +330,9 @@ namespace SpaceWars
 
             if (gameState == GameState.Playing)
             {
-                backGround.Draw(spriteBatch);
+                //backGround.Draw(spriteBatch);
+
+                particleSystem.Draw(spriteBatch);
 
                 spaceShip.Draw(spriteBatch);
 
@@ -338,6 +353,7 @@ namespace SpaceWars
 
                 spriteBatch.DrawString(font, "Time: " + gameTime.TotalGameTime.ToString("h'h 'm'm 's's'") + " Score: " + score.ToString(), Vector2.Zero, Color.White);
                 //spriteBatch.DrawString(font, "X:" + spaceShip.Person.X + " Y:" + spaceShip.Person.Y, new Vector2(0, 800), Color.White);
+               
             }
 
             if (gameState == GameState.GameOver)
